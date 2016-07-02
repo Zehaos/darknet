@@ -170,6 +170,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             show_image(disp, "Demo");
             IplImage* ipl = image_to_ipl(disp);
             cvWriteFrame(videoWriter, ipl);
+            cvReleaseImage(&ipl);
             int c = cvWaitKey(1);
             if (c == 10){
                 if(frame_skip == 0) frame_skip = 60;
