@@ -1,6 +1,6 @@
-GPU=0
-CUDNN=0
-OPENCV=0
+GPU=1
+CUDNN=1
+OPENCV=1
 DEBUG=0
 
 ARCH= --gpu-architecture=compute_52 --gpu-code=compute_52
@@ -25,8 +25,8 @@ CFLAGS+=$(OPTS)
 ifeq ($(OPENCV), 1) 
 COMMON+= -DOPENCV
 CFLAGS+= -DOPENCV
-LDFLAGS+= `pkg-config --libs opencv` 
-COMMON+= `pkg-config --cflags opencv` 
+LDFLAGS+= `pkg-config --libs opencv2` 
+COMMON+= `pkg-config --cflags opencv2` 
 endif
 
 ifeq ($(GPU), 1) 

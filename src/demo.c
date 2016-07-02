@@ -28,6 +28,7 @@ static image det  ;
 static image det_s;
 static image disp = {0};
 static CvCapture * cap;
+static CvVideoWriter * videoWriter;
 static float fps = 0;
 static float demo_thresh = 0;
 
@@ -140,6 +141,19 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
         det_s = in_s;
     }
 
+    //create video writer
+    char* needle=".";
+    char* targetfilename = malloc(sizeof(char)*100);
+    strcpy(targetfilename, filename);
+    char* pstr = strstr(targetfilename, needle);
+    pstr[0] = '\0';
+    char* suffix = "_output.avi";
+    strcat(targetfilename, suffix);
+    CvSize framesize;
+    framesize.width = in.w;
+    framesize.height = in.h;
+    videoWriter = cvCreateVideoWriter(targetfilename, CV_FOURCC('D', 'I', 'V', 'X'), 25.0, framesize, 1);
+
     int count = 0;
     cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
     cvMoveWindow("Demo", 0, 0);
@@ -154,6 +168,8 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             if(pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
 
             show_image(disp, "Demo");
+            IplImage* ipl = image_to_ipl(disp);
+            cvWriteFrame(videoWriter, ipl);
             int c = cvWaitKey(1);
             if (c == 10){
                 if(frame_skip == 0) frame_skip = 60;
@@ -193,6 +209,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             before = after;
         }
     }
+    cvReleaseVideoWriter(&videoWriter);
 }
 #else
 void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, image *labels, int classes, int frame_skip)
