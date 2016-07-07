@@ -350,7 +350,7 @@ void test_yolo_dc(char *cfgfile, char *weightfile, char *filename, float thresh)
         convert_detections_dc(predictions, l.classes, l.n, l.sqrt, l.side, 1, 1, thresh, probs, boxes, 0);
         if (nms) do_nms_sort(boxes, probs, l.side*l.side*l.n, l.classes, nms);
         //draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, dc_names, dc_labels, 20);
-        draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, dc_names, dc_labels, 20);
+        draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, dc_names, dc_labels, 3);
         save_image(im, "predictions");
         show_image(im, "predictions");
 
@@ -368,7 +368,7 @@ void test_yolo_dc(char *cfgfile, char *weightfile, char *filename, float thresh)
 void run_yolo_dc(int argc, char **argv)
 {
     int i;
-    for(i = 0; i < 20; ++i){
+    for(i = 0; i < 3; ++i){
         char buff[256];
         sprintf(buff, "data/labels/%s.png", dc_names[i]);
         dc_labels[i] = load_image_color(buff, 0, 0);
@@ -389,5 +389,5 @@ void run_yolo_dc(int argc, char **argv)
     else if(0==strcmp(argv[2], "train")) train_yolo_dc(cfg, weights);
     //else if(0==strcmp(argv[2], "valid")) validate_yolo_dc(cfg, weights);
     //else if(0==strcmp(argv[2], "recall")) validate_yolo_dc_recall(cfg, weights);
-    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, dc_names, dc_labels, 20, frame_skip);
+    else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, dc_names, dc_labels, 3, frame_skip);
 }
