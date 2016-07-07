@@ -365,7 +365,12 @@ void show_image_cv(image p, const char *name)
     image get_image_from_stream(CvCapture *cap)
     {
         IplImage* src = cvQueryFrame(cap);
+        /*
+        IplImage* dst = cvCreateImage(cvSize(1000,1000),IPL_DEPTH_8U,3);
         if (!src) return make_empty_image(0,0,0);
+        cvSetImageROI(src,cvRect(0, 0, 1000, 1000));//set roi
+        cvCopy(src,dst,NULL);
+        */
         image im = ipl_to_image(src);
         rgbgr_image(im);
         return im;
@@ -929,25 +934,36 @@ image ipl_to_image(IplImage* src)
     return out;
 }
 
+/*
+* Function: trun image to ipl
+* Author: Zehao Shi
+* Date: 2016.05.28
+*/
 IplImage* image_to_ipl(image img)
 {
-   int w = img.w;
-   int h = img.h;
-   int depth = 8;
-   int c = img.c;
-   int step = img.c*img.w;
-   int i, j, k, count= 0;
-   IplImage* src= cvCreateImage(cvSize(w, h), depth, c);
+    int w = img.w;
+    int h = img.h;
+    int depth = 8;
+    printf("%d ",img.c);
+    int c = img.c;
+    // memory align 4 byte
+    int align = 4 - c*w%4;
+    int step = c*w+ (align==4?0:align);
+
+    int i, j, k, count= 0;
+    IplImage* src= cvCreateImage(cvSize(w, h), depth, c);
 
     for(k= 0; k < c; ++k){
         for(i = 0; i < h; ++i){
             for(j = 0; j < w; ++j){
-        src->imageData[i*step + j*c + k] = img.data[count++] * 255.;
+                src->imageData[i*step + j*c + k] = img.data[count++] * 255.;
+            }
         }
-         }
-          }
-   cvCvtColor(src, src, CV_RGB2BGR);
-   return src;
+    }
+    //cvShowImage("2",src);
+    //cvWaitKey(0);
+    cvCvtColor(src, src, CV_RGB2BGR);
+    return src;
 }
 
 image load_image_cv(char *filename, int channels)
