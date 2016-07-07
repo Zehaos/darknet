@@ -235,3 +235,4 @@ src/yolo.c
 src/yolo_kernels.cu
 LICENSE
 README.md
+src/yolo_dc.c
