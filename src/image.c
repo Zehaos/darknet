@@ -88,6 +88,8 @@ void draw_box_width(image a, int x1, int y1, int x2, int y2, int w, float r, flo
     }
 }
 
+
+
 void draw_bbox(image a, box bbox, int w, float r, float g, float b)
 {
     int left  = (bbox.x-bbox.w/2)*a.w;
@@ -365,13 +367,16 @@ void show_image_cv(image p, const char *name)
     image get_image_from_stream(CvCapture *cap)
     {
         IplImage* src = cvQueryFrame(cap);
-        /*
+#ifdef SET_ROI
         IplImage* dst = cvCreateImage(cvSize(1000,1000),IPL_DEPTH_8U,3);
         if (!src) return make_empty_image(0,0,0);
         cvSetImageROI(src,cvRect(0, 0, 1000, 1000));//set roi
         cvCopy(src,dst,NULL);
-        */
+        image im = ipl_to_image(dst);
+#endif
+#ifndef SET_ROI
         image im = ipl_to_image(src);
+#endif
         rgbgr_image(im);
         return im;
     }
